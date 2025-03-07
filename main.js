@@ -98,6 +98,12 @@ async function init() {
 
   document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
 
+  //
+
+  controller = renderer.xr.getController(0);
+  controller.addEventListener('select', onSelect);
+  scene.add(controller);
+
   //-------------------------------
   /// Initial Reticle
   //-------------------------------
@@ -128,7 +134,16 @@ async function init() {
   /// Raycaster
   //------------------------------------
 
-  Raycast = new THREE.Raycaster();
+  const Raycast = new THREE.Raycaster();
+
+  let touchOri;
+  let cameraPos;
+  let directionFromCamera;
+  let interstects;
+
+  //------------------------------------
+  /// Interaction
+  //------------------------------------
 
   function onSelect() {
     // étape de placement de la grille de choix
@@ -160,15 +175,15 @@ async function init() {
       }
     }
     if (PlayStep == 2) {
-
+      Raycast.setFromXRController(controller);
+      interstects = Raycast.intersectObjects(scene.children);
+      console.log(interstects);
     }
     PlayStep++;
     // étape sélection de position des objets
   }
 
-  controller = renderer.xr.getController(0);
-  controller.addEventListener('select', onSelect);
-  scene.add(controller);
+
 
 
   window.addEventListener('resize', onWindowResize);
